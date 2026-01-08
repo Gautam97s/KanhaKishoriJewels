@@ -45,6 +45,8 @@ export const PRODUCTS: Product[] = [
         details: { material: '18k Gold', weight: '2g' },
         inStock: true,
         isNewArrival: true,
+        discountPercentage: 0,
+        isHolidaySpecial: false,
     },
     {
         id: '2',

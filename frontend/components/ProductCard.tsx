@@ -48,9 +48,23 @@ export default function ProductCard({ product }: ProductCardProps) {
                         {product.name}
                     </h3>
                 </Link>
-                <p className="text-stone-500 text-xs font-medium tracking-wide">
-                    ₹{product.price.toLocaleString('en-IN')}
-                </p>
+
+                <div className="flex items-center gap-2">
+                    {product.discountPercentage && product.discountPercentage > 0 ? (
+                        <>
+                            <p className="text-stone-500 text-xs font-medium tracking-wide line-through">
+                                ₹{product.price.toLocaleString('en-IN')}
+                            </p>
+                            <p className="text-terracotta-600 text-sm font-bold tracking-wide">
+                                ₹{(product.price * (1 - product.discountPercentage / 100)).toLocaleString('en-IN')}
+                            </p>
+                        </>
+                    ) : (
+                        <p className="text-stone-500 text-xs font-medium tracking-wide">
+                            ₹{product.price.toLocaleString('en-IN')}
+                        </p>
+                    )}
+                </div>
             </div>
         </div>
     );

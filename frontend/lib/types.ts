@@ -31,6 +31,8 @@ export interface Product {
     };
     inStock: boolean;
     isNewArrival?: boolean;
+    discountPercentage?: number;
+    isHolidaySpecial?: boolean;
 }
 
 export interface CartItem {

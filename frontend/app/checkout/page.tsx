@@ -1,15 +1,24 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ShieldCheck, Truck } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, Truck, Home } from 'lucide-react';
 import { useShop } from '../../context/ShopContext';
 import { useAuth } from '../../context/AuthContext';
-import { Address } from '../../lib/types';
 import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+
+interface SavedAddress {
+    id: string;
+    street: string;
+    city: string;
+    state: string;
+    zip: string;
+    country: string;
+    is_default: boolean;
+}
 
 export default function CheckoutPage() {
     const router = useRouter();
@@ -18,18 +27,83 @@ export default function CheckoutPage() {
     const [step, setStep] = useState<'form' | 'success'>('form');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [lastOrderAmount, setLastOrderAmount] = useState(0);
+
+    // Address Selection State
+    const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
+    const [selectedAddressId, setSelectedAddressId] = useState<string>('');
 
     const [formData, setFormData] = useState({
         customerName: user?.name || '',
-        phone: '',
-        street: '',
+        phone: user?.phone_number || '',
+        street: user?.address || '',
         city: '',
         state: '',
         zip: '',
-        country: 'India' // Defaulting to India for COD usually
+        country: 'India'
     });
 
-    const subtotal = cart.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
+    // Fetch addresses on mount
+    useEffect(() => {
+        if (user) {
+            fetchSavedAddresses();
+            // Also update basic details if available
+            setFormData(prev => ({
+                ...prev,
+                customerName: user.name || prev.customerName,
+                phone: user.phone_number || prev.phone,
+                // If user had a legacy address string, it might be in user.address, 
+                // but we prefer the structured addresses now.
+            }));
+        }
+    }, [user]);
+
+    const fetchSavedAddresses = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+
+            const response = await axios.get(`${API_URL}/users/me/addresses`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setSavedAddresses(response.data);
+
+            // Auto-select default if exists
+            const defaultAddr = response.data.find((a: SavedAddress) => a.is_default);
+            if (defaultAddr) {
+                fillAddress(defaultAddr);
+            }
+        } catch (err) {
+            console.error("Failed to fetch saved addresses");
+        }
+    };
+
+    const fillAddress = (addr: SavedAddress) => {
+        setSelectedAddressId(addr.id);
+        setFormData(prev => ({
+            ...prev,
+            street: addr.street,
+            city: addr.city,
+            state: addr.state,
+            zip: addr.zip,
+            country: addr.country
+        }));
+    };
+
+    const handleAddressSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const addrId = e.target.value;
+        if (!addrId) return;
+
+        const addr = savedAddresses.find(a => a.id === addrId);
+        if (addr) {
+            fillAddress(addr);
+        }
+    };
+
+    const subtotal = cart.reduce((acc, item) => {
+        const price = item.product.discountPercentage ? item.product.price * (1 - item.product.discountPercentage / 100) : item.product.price;
+        return acc + (price * item.quantity);
+    }, 0);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -57,12 +131,32 @@ export default function CheckoutPage() {
                 phone: formData.phone
             };
 
+            // Auto-save address if it's new (not selected from list)
+            if (!selectedAddressId) {
+                try {
+                    await axios.post(`${API_URL}/users/me/addresses`, {
+                        street: formData.street,
+                        city: formData.city,
+                        state: formData.state,
+                        zip: formData.zip,
+                        country: formData.country,
+                        is_default: savedAddresses.length === 0 // Make default if it's the first one
+                    }, {
+                        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                    });
+                } catch (saveErr) {
+                    console.error("Failed to auto-save address", saveErr);
+                    // Don't block order placement if save fails
+                }
+            }
+
             await axios.post(`${API_URL}/orders/`, orderData, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             });
 
+            setLastOrderAmount(subtotal);
             clearCart();
             setStep('success');
             window.scrollTo(0, 0);
@@ -85,7 +179,7 @@ export default function CheckoutPage() {
                     <h2 className="font-serif text-3xl mb-4 text-stone-900">Order Placed Successfully</h2>
                     <p className="text-stone-500 mb-8">
                         Thank you for your purchase. Your order has been confirmed. <br />
-                        <span className="font-bold text-stone-700">Please pay ₹{subtotal.toLocaleString('en-IN')} on delivery.</span>
+                        <span className="font-bold text-stone-700">Please pay ₹{lastOrderAmount.toLocaleString('en-IN')} on delivery.</span>
                     </p>
                     <Link href="/" className="bg-stone-900 text-white px-8 py-3 uppercase tracking-widest text-xs hover:bg-stone-800 transition-colors inline-block">
                         Return to Home
@@ -96,7 +190,7 @@ export default function CheckoutPage() {
     }
 
     return (
-        <div className="pb-24 min-h-screen bg-beige-100 animate-fade-in pt-10">
+        <div className="pb-24 min-h-screen bg-beige-100 animate-fade-in pt-24">
             <div className="max-w-7xl mx-auto px-6">
                 <button
                     onClick={() => toggleCart(true)}
@@ -146,6 +240,27 @@ export default function CheckoutPage() {
                                     <span className="w-6 h-6 rounded-full bg-stone-900 text-white flex items-center justify-center text-xs">2</span>
                                     Shipping Address
                                 </h2>
+
+                                {/* Saved Address Selection */}
+                                {savedAddresses.length > 0 && (
+                                    <div className="mb-6 p-4 bg-beige-50 border border-stone-200 rounded-sm">
+                                        <label className="text-xs uppercase tracking-wider text-stone-500 font-bold mb-2 block flex items-center gap-2">
+                                            <Home className="w-3 h-3" /> Select Saved Address
+                                        </label>
+                                        <select
+                                            value={selectedAddressId}
+                                            onChange={handleAddressSelect}
+                                            className="w-full p-2 bg-white border border-stone-300 text-sm focus:border-stone-900 outline-none"
+                                        >
+                                            <option value="">-- Choose an address --</option>
+                                            {savedAddresses.map(addr => (
+                                                <option key={addr.id} value={addr.id}>
+                                                    {addr.street}, {addr.city}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                )}
 
                                 <div className="grid grid-cols-2 gap-4 animate-fade-in">
                                     <input required name="street" value={formData.street} onChange={handleChange} type="text" placeholder="Street Address" className="col-span-2 w-full bg-beige-50 border-none p-4 text-sm focus:ring-1 focus:ring-stone-900 outline-none" />

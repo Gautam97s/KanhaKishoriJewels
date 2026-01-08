@@ -35,7 +35,23 @@ export default function ProductDetailPage() {
                     </div>
                     <div className="flex flex-col justify-center">
                         <h1 className="font-serif text-3xl md:text-5xl text-stone-900 mb-4 md:mb-6">{product.name}</h1>
-                        <p className="text-2xl font-light text-stone-900 mb-6 md:mb-8">₹{product.price.toLocaleString('en-IN')}</p>
+                        <div className="flex items-center gap-4 mb-6 md:mb-8">
+                            {product.discountPercentage && product.discountPercentage > 0 ? (
+                                <>
+                                    <p className="text-2xl font-light text-stone-900 text-terracotta-600 font-bold">
+                                        ₹{(product.price * (1 - product.discountPercentage / 100)).toLocaleString('en-IN')}
+                                    </p>
+                                    <p className="text-xl font-light text-stone-500 line-through">
+                                        ₹{product.price.toLocaleString('en-IN')}
+                                    </p>
+                                    <span className="bg-terracotta-100 text-terracotta-700 text-xs px-2 py-1 uppercase tracking-widest font-bold rounded">
+                                        {product.discountPercentage}% OFF
+                                    </span>
+                                </>
+                            ) : (
+                                <p className="text-2xl font-light text-stone-900">₹{product.price.toLocaleString('en-IN')}</p>
+                            )}
+                        </div>
                         <div className="space-y-6 mb-10">
                             <p className="text-stone-600 leading-relaxed font-light">{product.description}</p>
                             <div className="flex gap-8 text-sm text-stone-500 border-t border-stone-100 pt-6">

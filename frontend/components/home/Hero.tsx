@@ -55,21 +55,27 @@ export default function Hero({ products }: HeroProps) {
                             <div className="bg-white rounded-full p-2 cursor-pointer hover:scale-110 transition-transform">
                                 <ArrowRight className="w-4 h-4 text-terracotta-600" />
                             </div>
-                            {products.length > 0 && (
-                                <img
-                                    src={products.length > 3 ? products[3].image : products[0].image}
-                                    alt="Promo"
-                                    className="w-24 h-24 object-cover ml-4 rounded-full bg-terracotta-700"
-                                />
-                            )}
                         </div>
+                        {products.find(p => p.isHolidaySpecial) ? (
+                            <img
+                                src={products.find(p => p.isHolidaySpecial)!.image}
+                                alt="Promo"
+                                className="w-24 h-24 object-cover ml-4 rounded-full bg-terracotta-700"
+                            />
+                        ) : products.length > 0 && (
+                            <img
+                                src={products.length > 3 ? products[3].image : products[0].image}
+                                alt="Promo"
+                                className="w-24 h-24 object-cover ml-4 rounded-full bg-terracotta-700"
+                            />
+                        )}
                     </div>
                 </div>
+            </div>
 
-                {/* Address */}
-                <div className="absolute bottom-8 right-8 text-xs text-right text-stone-600 hidden md:block">
-                    Delhi, India
-                </div>
+            {/* Address */}
+            <div className="absolute bottom-8 right-8 text-xs text-right text-stone-600 hidden md:block">
+                Delhi, India
             </div>
         </header>
     );

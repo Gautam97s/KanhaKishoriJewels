@@ -8,7 +8,10 @@ import { useShop } from '../context/ShopContext';
 export default function CartDrawer() {
     const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity } = useShop();
 
-    const subtotal = cart.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
+    const subtotal = cart.reduce((acc, item) => {
+        const price = item.product.discountPercentage ? item.product.price * (1 - item.product.discountPercentage / 100) : item.product.price;
+        return acc + (price * item.quantity);
+    }, 0);
 
     return (
         <div className={`fixed inset-0 z-[60] flex justify-end ${isCartOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>

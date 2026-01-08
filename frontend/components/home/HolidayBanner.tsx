@@ -26,7 +26,13 @@ export default function HolidayBanner({ products }: HolidayBannerProps) {
                 </div>
                 <div className="md:w-1/2 relative h-48 md:h-96 w-full flex justify-center items-center">
                     {/* Giant ring image mockup using dynamic product if available */}
-                    {products.length > 0 ? (
+                    {products.find(p => p.isHolidaySpecial) ? (
+                        <img
+                            src={products.find(p => p.isHolidaySpecial)!.image}
+                            alt="Holiday Special"
+                            className="w-auto h-full object-contain drop-shadow-2xl transform rotate-12 scale-125 transition-transform duration-700 hover:scale-150"
+                        />
+                    ) : products.length > 0 ? (
                         <img
                             src={products.length > 4 ? products[4].image : products[0].image}
                             alt="Diamond Ring"

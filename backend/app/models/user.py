@@ -18,3 +18,4 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     orders = relationship("Order", back_populates="user")
+    addresses = relationship("Address", back_populates="user", cascade="all, delete-orphan")

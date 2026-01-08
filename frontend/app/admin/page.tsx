@@ -28,7 +28,9 @@ export default function AdminPage() {
         description: '',
         material: '',
         gemstone: '',
-        inStock: true
+        inStock: true,
+        discountPercentage: '0',
+        isHolidaySpecial: false
     });
     const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -79,7 +81,9 @@ export default function AdminPage() {
             description: '',
             material: '',
             gemstone: '',
-            inStock: true
+            inStock: true,
+            discountPercentage: '0',
+            isHolidaySpecial: false
         });
         setImagePreview(null);
         setEditingId(null);
@@ -95,7 +99,9 @@ export default function AdminPage() {
             description: product.description,
             material: product.details.material,
             gemstone: product.details.gemstone || '',
-            inStock: product.inStock
+            inStock: product.inStock,
+            discountPercentage: (product.discountPercentage || 0).toString(),
+            isHolidaySpecial: product.isHolidaySpecial || false
         });
         setImagePreview(product.image);
         setEditingId(product.id);
@@ -128,6 +134,8 @@ export default function AdminPage() {
             },
             inStock: formData.inStock,
             isNewArrival: true,
+            discountPercentage: parseFloat(formData.discountPercentage) || 0,
+            isHolidaySpecial: formData.isHolidaySpecial
         };
 
         try {
@@ -370,168 +378,192 @@ export default function AdminPage() {
                             </table>
                         </div>
                     </div>
-                        ) : activeTab === 'orders' ? (
-                        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                            <OrdersManager />
-                        </div>
-                        ) : (
-                        <form onSubmit={handleSubmit} className="bg-white p-8 md:p-12 shadow-sm rounded-lg grid grid-cols-1 lg:grid-cols-2 gap-12 animate-fade-in relative">
-                            {editingId && (
-                                <div className="absolute top-4 right-4 bg-terracotta-100 text-terracotta-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-2">
-                                    <Edit className="w-3 h-3" /> Editing Mode
-                                </div>
-                            )}
+                ) : activeTab === 'orders' ? (
+                    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                        <OrdersManager />
+                    </div>
+                ) : (
+                    <form onSubmit={handleSubmit} className="bg-white p-8 md:p-12 shadow-sm rounded-lg grid grid-cols-1 lg:grid-cols-2 gap-12 animate-fade-in relative">
+                        {editingId && (
+                            <div className="absolute top-4 right-4 bg-terracotta-100 text-terracotta-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                                <Edit className="w-3 h-3" /> Editing Mode
+                            </div>
+                        )}
 
-                            {successMessage && (
-                                <div className="lg:col-span-2 bg-green-50 border border-green-200 text-green-700 p-4 rounded text-sm mb-4 flex items-center gap-2">
-                                    <Check className="w-4 h-4" />
-                                    {successMessage}
-                                </div>
-                            )}
+                        {successMessage && (
+                            <div className="lg:col-span-2 bg-green-50 border border-green-200 text-green-700 p-4 rounded text-sm mb-4 flex items-center gap-2">
+                                <Check className="w-4 h-4" />
+                                {successMessage}
+                            </div>
+                        )}
 
-                            {/* Left: Image Upload */}
-                            <div>
-                                <label className="block font-serif text-lg mb-4">Product Photography</label>
-                                <div className={`relative aspect-square bg-beige-50 border-2 border-dashed ${error.image ? 'border-red-500 bg-red-50/10' : 'border-stone-300'} rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-beige-100 transition-colors group overflow-hidden`}>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleImageChange}
-                                        className="absolute inset-0 opacity-0 cursor-pointer z-10"
-                                    />
-                                    {imagePreview ? (
-                                        <img src={imagePreview} alt="Preview" className="w-full h-full object-contain p-4" />
-                                    ) : (
-                                        <div className="text-center p-6">
-                                            <div className="w-16 h-16 rounded-full bg-stone-200 text-stone-500 flex items-center justify-center mx-auto mb-4 group-hover:bg-terracotta-100 group-hover:text-terracotta-600 transition-colors">
-                                                <Upload className="w-8 h-8" />
-                                            </div>
-                                            <p className="text-sm font-medium text-stone-900">Click to upload image</p>
-                                            <p className="text-xs text-stone-500 mt-2">SVG, PNG, JPG or GIF</p>
+                        {/* Left: Image Upload */}
+                        <div>
+                            <label className="block font-serif text-lg mb-4">Product Photography</label>
+                            <div className={`relative aspect-square bg-beige-50 border-2 border-dashed ${error.image ? 'border-red-500 bg-red-50/10' : 'border-stone-300'} rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-beige-100 transition-colors group overflow-hidden`}>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                                />
+                                {imagePreview ? (
+                                    <img src={imagePreview} alt="Preview" className="w-full h-full object-contain p-4" />
+                                ) : (
+                                    <div className="text-center p-6">
+                                        <div className="w-16 h-16 rounded-full bg-stone-200 text-stone-500 flex items-center justify-center mx-auto mb-4 group-hover:bg-terracotta-100 group-hover:text-terracotta-600 transition-colors">
+                                            <Upload className="w-8 h-8" />
                                         </div>
-                                    )}
-                                </div>
-                                {error.image && <p className="text-red-500 text-xs mt-2">{error.image}</p>}
-                                {imagePreview && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setImagePreview(null)}
-                                        className="mt-4 text-xs text-red-500 flex items-center gap-1 hover:underline"
-                                    >
-                                        <Trash2 className="w-3 h-3" /> Remove Image
-                                    </button>
+                                        <p className="text-sm font-medium text-stone-900">Click to upload image</p>
+                                        <p className="text-xs text-stone-500 mt-2">SVG, PNG, JPG or GIF</p>
+                                    </div>
                                 )}
                             </div>
+                            {error.image && <p className="text-red-500 text-xs mt-2">{error.image}</p>}
+                            {imagePreview && (
+                                <button
+                                    type="button"
+                                    onClick={() => setImagePreview(null)}
+                                    className="mt-4 text-xs text-red-500 flex items-center gap-1 hover:underline"
+                                >
+                                    <Trash2 className="w-3 h-3" /> Remove Image
+                                </button>
+                            )}
+                        </div>
 
-                            {/* Right: Details */}
-                            <div className="space-y-6">
+                        {/* Right: Details */}
+                        <div className="space-y-6">
+                            <div>
+                                <label className="block text-xs font-bold uppercase tracking-widest text-stone-900 mb-2">Product Name</label>
+                                <input
+                                    required
+                                    type="text"
+                                    value={formData.name}
+                                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                    className="w-full bg-beige-50 border-none p-4 text-sm focus:ring-1 focus:ring-stone-900 outline-none"
+                                    placeholder="e.g. Royal Sapphire Necklace"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-xs font-bold uppercase tracking-widest text-stone-900 mb-2">Product Name</label>
+                                    <label className="block text-xs font-bold uppercase tracking-widest text-stone-900 mb-2">Price (INR)</label>
                                     <input
                                         required
                                         type="text"
-                                        value={formData.name}
-                                        onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                        className="w-full bg-beige-50 border-none p-4 text-sm focus:ring-1 focus:ring-stone-900 outline-none"
-                                        placeholder="e.g. Royal Sapphire Necklace"
+                                        value={formData.price}
+                                        onChange={handlePriceChange}
+                                        className={`w-full bg-beige-50 border ${error.price ? 'border-red-500' : 'border-transparent'} p-4 text-sm focus:ring-1 focus:ring-stone-900 outline-none`}
+                                        placeholder="0.00"
                                     />
+                                    {error.price && <p className="text-red-500 text-xs mt-1">{error.price}</p>}
                                 </div>
-
-                                <div className="grid grid-cols-2 gap-6">
-                                    <div>
-                                        <label className="block text-xs font-bold uppercase tracking-widest text-stone-900 mb-2">Price (INR)</label>
-                                        <input
-                                            required
-                                            type="text"
-                                            value={formData.price}
-                                            onChange={handlePriceChange}
-                                            className={`w-full bg-beige-50 border ${error.price ? 'border-red-500' : 'border-transparent'} p-4 text-sm focus:ring-1 focus:ring-stone-900 outline-none`}
-                                            placeholder="0.00"
-                                        />
-                                        {error.price && <p className="text-red-500 text-xs mt-1">{error.price}</p>}
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold uppercase tracking-widest text-stone-900 mb-2">Category</label>
-                                        <select
-                                            value={formData.category}
-                                            onChange={e => setFormData({ ...formData, category: e.target.value })}
-                                            className="w-full bg-beige-50 border-none p-4 text-sm focus:ring-1 focus:ring-stone-900 outline-none "
-                                        >
-                                            {CATEGORIES.map(cat => (
-                                                <option key={cat.id} value={cat.id}>{cat.name}</option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                <div className="flex items-center gap-2 mt-6">
+                                    <input
+                                        type="checkbox"
+                                        id="isHolidaySpecial"
+                                        checked={formData.isHolidaySpecial}
+                                        onChange={e => setFormData({ ...formData, isHolidaySpecial: e.target.checked })}
+                                        className="w-4 h-4 text-stone-900 border-stone-300 rounded focus:ring-stone-900"
+                                    />
+                                    <label htmlFor="isHolidaySpecial" className="text-xs font-bold uppercase tracking-widest text-stone-900">
+                                        Holiday Special
+                                    </label>
                                 </div>
-
                                 <div>
-                                    <label className="block text-xs font-bold uppercase tracking-widest text-stone-900 mb-2">Description</label>
-                                    <textarea
-                                        required
-                                        value={formData.description}
-                                        onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                        className="w-full bg-beige-50 border-none p-4 text-sm focus:ring-1 focus:ring-stone-900 outline-none h-32 resize-none"
-                                        placeholder="Describe the elegance and craftsmanship..."
+                                    <label className="block text-xs font-bold uppercase tracking-widest text-stone-900 mb-2">Discount (%)</label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        max="100"
+                                        value={formData.discountPercentage}
+                                        onChange={e => setFormData({ ...formData, discountPercentage: e.target.value })}
+                                        className="w-full bg-beige-50 border-none p-4 text-sm focus:ring-1 focus:ring-stone-900 outline-none"
+                                        placeholder="0"
                                     />
                                 </div>
-
-                                <div className="grid grid-cols-2 gap-6">
-                                    <div>
-                                        <label className="block text-xs font-bold uppercase tracking-widest text-stone-900 mb-2">Material</label>
-                                        <input
-                                            required
-                                            type="text"
-                                            value={formData.material}
-                                            onChange={e => setFormData({ ...formData, material: e.target.value })}
-                                            className="w-full bg-beige-50 border-none p-4 text-sm focus:ring-1 focus:ring-stone-900 outline-none"
-                                            placeholder="e.g. 18k Gold"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-bold uppercase tracking-widest text-stone-900 mb-2">Gemstone (Optional)</label>
-                                        <input
-                                            type="text"
-                                            value={formData.gemstone}
-                                            onChange={e => setFormData({ ...formData, gemstone: e.target.value })}
-                                            className="w-full bg-beige-50 border-none p-4 text-sm focus:ring-1 focus:ring-stone-900 outline-none"
-                                            placeholder="e.g. Diamond"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center gap-4 py-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => setFormData({ ...formData, inStock: !formData.inStock })}
-                                        className={`w-6 h-6 border flex items-center justify-center transition-colors ${formData.inStock ? 'bg-stone-900 border-stone-900' : 'bg-white border-stone-300'}`}
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-widest text-stone-900 mb-2">Category</label>
+                                    <select
+                                        value={formData.category}
+                                        onChange={e => setFormData({ ...formData, category: e.target.value })}
+                                        className="w-full bg-beige-50 border-none p-4 text-sm focus:ring-1 focus:ring-stone-900 outline-none "
                                     >
-                                        {formData.inStock && <Check className="w-4 h-4 text-white" />}
-                                    </button>
-                                    <span className="text-sm text-stone-600">Available in Stock</span>
-                                </div>
-
-                                <div className="flex gap-4 pt-4">
-                                    {editingId && (
-                                        <button
-                                            type="button"
-                                            onClick={() => { setActiveTab('list'); resetForm(); }}
-                                            className="flex-1 bg-stone-100 text-stone-600 py-4 uppercase tracking-widest text-sm hover:bg-stone-200 transition-colors"
-                                        >
-                                            Cancel
-                                        </button>
-                                    )}
-                                    <button
-                                        type="submit"
-                                        className="flex-1 bg-terracotta-600 text-white py-4 uppercase tracking-widest text-sm hover:bg-terracotta-700 transition-colors shadow-lg flex items-center justify-center gap-2"
-                                    >
-                                        {editingId ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                                        {editingId ? 'Update Product' : 'Upload Product'}
-                                    </button>
+                                        {CATEGORIES.map(cat => (
+                                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
-                        </form>
+
+                            <div>
+                                <label className="block text-xs font-bold uppercase tracking-widest text-stone-900 mb-2">Description</label>
+                                <textarea
+                                    required
+                                    value={formData.description}
+                                    onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                    className="w-full bg-beige-50 border-none p-4 text-sm focus:ring-1 focus:ring-stone-900 outline-none h-32 resize-none"
+                                    placeholder="Describe the elegance and craftsmanship..."
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-widest text-stone-900 mb-2">Material</label>
+                                    <input
+                                        required
+                                        type="text"
+                                        value={formData.material}
+                                        onChange={e => setFormData({ ...formData, material: e.target.value })}
+                                        className="w-full bg-beige-50 border-none p-4 text-sm focus:ring-1 focus:ring-stone-900 outline-none"
+                                        placeholder="e.g. 18k Gold"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold uppercase tracking-widest text-stone-900 mb-2">Gemstone (Optional)</label>
+                                    <input
+                                        type="text"
+                                        value={formData.gemstone}
+                                        onChange={e => setFormData({ ...formData, gemstone: e.target.value })}
+                                        className="w-full bg-beige-50 border-none p-4 text-sm focus:ring-1 focus:ring-stone-900 outline-none"
+                                        placeholder="e.g. Diamond"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-4 py-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, inStock: !formData.inStock })}
+                                    className={`w-6 h-6 border flex items-center justify-center transition-colors ${formData.inStock ? 'bg-stone-900 border-stone-900' : 'bg-white border-stone-300'}`}
+                                >
+                                    {formData.inStock && <Check className="w-4 h-4 text-white" />}
+                                </button>
+                                <span className="text-sm text-stone-600">Available in Stock</span>
+                            </div>
+
+                            <div className="flex gap-4 pt-4">
+                                {editingId && (
+                                    <button
+                                        type="button"
+                                        onClick={() => { setActiveTab('list'); resetForm(); }}
+                                        className="flex-1 bg-stone-100 text-stone-600 py-4 uppercase tracking-widest text-sm hover:bg-stone-200 transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                )}
+                                <button
+                                    type="submit"
+                                    className="flex-1 bg-terracotta-600 text-white py-4 uppercase tracking-widest text-sm hover:bg-terracotta-700 transition-colors shadow-lg flex items-center justify-center gap-2"
+                                >
+                                    {editingId ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                                    {editingId ? 'Update Product' : 'Upload Product'}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 )}
-                    </div>
-    </div>
-            );
+            </div>
+        </div>
+    );
 };

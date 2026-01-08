@@ -100,6 +100,7 @@ export default function OrdersManager() {
                             <th className="p-4 font-medium">Order ID</th>
                             <th className="p-4 font-medium">Customer</th>
                             <th className="p-4 font-medium">Items</th>
+                            <th className="p-4 font-medium">Address</th>
                             <th className="p-4 font-medium">Total</th>
                             <th className="p-4 font-medium">Date</th>
                             <th className="p-4 font-medium">Status</th>
@@ -130,6 +131,15 @@ export default function OrdersManager() {
                                     </td>
                                     <td className="p-4 text-sm text-stone-600">
                                         {order.items?.length || 0} items
+                                    </td>
+                                    <td className="p-4 text-xs text-stone-600 max-w-xs truncate" title={`${order.shipping_address?.street || ''}, ${order.shipping_address?.city || ''}`}>
+                                        {order.shipping_address ? (
+                                            <>
+                                                <p className="font-medium text-stone-900">{order.shipping_address.street}</p>
+                                                <p>{order.shipping_address.city}, {order.shipping_address.state} {order.shipping_address.zip}</p>
+                                                <p>{order.shipping_address.country}</p>
+                                            </>
+                                        ) : <span className="text-stone-400 italic">No address</span>}
                                     </td>
                                     <td className="p-4 text-sm font-medium text-stone-900">
                                         ₹{order.total_amount.toLocaleString('en-IN')}

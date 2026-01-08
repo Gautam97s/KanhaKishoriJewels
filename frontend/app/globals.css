@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --color-beige-50: #FAF9F6;
+  --color-beige-100: #F5F2ED;
+  --color-beige-200: #EBE5DE;
+  --color-beige-300: #D6CFC7;
+
+  --color-terracotta-500: #A63B3B;
+  --color-terracotta-600: #8B2E2E;
+  --color-terracotta-700: #682222;
+
+  --color-gold-100: #F9F1D8;
+  --color-gold-200: #F0DEAA;
+  --color-gold-400: #D4AF37;
+  --color-gold-500: #C5A028;
+  --color-gold-600: #A08020;
+
+  --color-stone-50: #FAFAF9;
+  --color-stone-100: #F5F5F4;
+  --color-stone-800: #292524;
+  --color-stone-900: #1C1917;
+
+  --font-serif: "Cinzel", serif;
+  --font-sans: "Lato", sans-serif;
+
+  --animate-fade-in: fade-in 0.5s ease-out;
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+:root {
+  --background: #F5F2ED;
+  /* Beige-100 */
+  --foreground: #1C1917;
+  /* Stone-900 */
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Hide Scrollbar Utility */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

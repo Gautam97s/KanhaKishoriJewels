@@ -3,7 +3,7 @@ import axios from 'axios';
 import { MapPin, Plus, Trash2, Edit2, Save, X, Home } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface Address {
     id: string;

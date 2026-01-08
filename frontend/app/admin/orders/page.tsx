@@ -20,7 +20,7 @@ interface Order {
     payment_method: string;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function AdminOrdersPage() {
     const router = useRouter();

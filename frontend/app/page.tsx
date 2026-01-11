@@ -41,7 +41,7 @@ export default function Home() {
 
       <NewArrivals products={products} />
 
-      <Testimonials />
+      {/* <Testimonials /> */}
 
       <HolidayBanner products={products} />
 

@@ -4,9 +4,13 @@ import React from 'react';
 import Link from 'next/link';
 import { Minus, Plus, Trash2, ArrowRight } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
+import { useAuth } from '../context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export default function CartDrawer() {
     const { cart, isCartOpen, toggleCart, removeFromCart, updateQuantity } = useShop();
+    const { user } = useAuth();
+    const router = useRouter();
 
     const subtotal = cart.reduce((acc, item) => {
         const price = item.product.discountPercentage ? item.product.price * (1 - item.product.discountPercentage / 100) : item.product.price;
@@ -81,13 +85,19 @@ export default function CartDrawer() {
                             <span>Subtotal</span>
                             <span>₹{subtotal.toLocaleString('en-IN')}</span>
                         </div>
-                        <Link
-                            href="/checkout"
-                            onClick={() => toggleCart(false)}
+                        <button
+                            onClick={() => {
+                                toggleCart(false);
+                                if (user) {
+                                    router.push('/checkout');
+                                } else {
+                                    router.push('/signin');
+                                }
+                            }}
                             className="w-full bg-stone-900 text-white py-4 uppercase tracking-widest text-sm hover:bg-terracotta-600 transition-colors flex justify-center items-center gap-2"
                         >
                             Checkout <ArrowRight className="w-4 h-4" />
-                        </Link>
+                        </button>
                     </div>
                 )}
             </div>

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function SignUp() {
     const { signup, user } = useAuth();
@@ -13,6 +14,7 @@ export default function SignUp() {
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -84,15 +86,28 @@ export default function SignUp() {
                         <label htmlFor="password" className="block text-xs font-bold text-stone-900 uppercase tracking-wider mb-2">
                             Password
                         </label>
-                        <input
-                            id="password"
-                            type="password"
-                            required
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full bg-beige-50 border-b-2 border-stone-200 px-3 py-3 text-stone-900 focus:outline-none focus:border-terracotta-500 transition-colors rounded-t-sm"
-                            placeholder="••••••••"
-                        />
+                        <div className="relative">
+                            <input
+                                id="password"
+                                type={showPassword ? "text" : "password"}
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full bg-beige-50 border-b-2 border-stone-200 px-3 py-3 text-stone-900 focus:outline-none focus:border-terracotta-500 transition-colors rounded-t-sm pr-10"
+                                placeholder="••••••••"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 transition-colors"
+                            >
+                                {showPassword ? (
+                                    <EyeOff className="h-4 w-4" />
+                                ) : (
+                                    <Eye className="h-4 w-4" />
+                                )}
+                            </button>
+                        </div>
                         <p className="mt-2 text-xs text-stone-400">Must be at least 8 characters long.</p>
                     </div>
 

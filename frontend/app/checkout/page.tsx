@@ -23,7 +23,7 @@ interface SavedAddress {
 export default function CheckoutPage() {
     const router = useRouter();
     const { cart, clearCart, toggleCart } = useShop();
-    const { user } = useAuth();
+    const { user, loading: authLoading } = useAuth();
     const [step, setStep] = useState<'form' | 'success'>('form');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -44,19 +44,26 @@ export default function CheckoutPage() {
     });
 
     // Fetch addresses on mount
+    // Fetch addresses on mount
     useEffect(() => {
-        if (user) {
+        if (!authLoading) {
+            if (!user) {
+                router.push('/signin?redirect=/checkout');
+                return;
+            }
+
             fetchSavedAddresses();
             // Also update basic details if available
             setFormData(prev => ({
                 ...prev,
                 customerName: user.name || prev.customerName,
                 phone: user.phone_number || prev.phone,
-                // If user had a legacy address string, it might be in user.address, 
-                // but we prefer the structured addresses now.
             }));
         }
-    }, [user]);
+    }, [user, authLoading, router]);
+
+    // Better implementation using loading state if available (it is not exposed in destructuring above yet)
+
 
     const fetchSavedAddresses = async () => {
         try {

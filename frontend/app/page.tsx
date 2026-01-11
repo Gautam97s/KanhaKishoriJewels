@@ -12,7 +12,6 @@ import HolidayBanner from '../components/home/HolidayBanner';
 
 export default function Home() {
   const { products } = useShop();
-  const { products } = useShop();
 
 
 

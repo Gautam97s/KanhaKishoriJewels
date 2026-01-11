@@ -18,7 +18,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
             <main className={`min-h-screen ${!isAuthPage && pathname !== '/about' ? 'pt-16' : ''}`}>
                 {children}
             </main>
-            {!isAuthPage && <AIConcierge />}
+            {/* {!isAuthPage && <AIConcierge />} */}
             {!isAuthPage && <Footer />}
         </>
     );

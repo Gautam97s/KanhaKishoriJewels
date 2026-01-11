@@ -32,11 +32,11 @@ export default function Footer() {
                             <li><Link href="/privacy-policy" className="hover:text-gold-400 cursor-pointer transition-colors">Privacy Policy</Link></li>
                             <li><Link href="/terms-of-service" className="hover:text-gold-400 cursor-pointer transition-colors">Terms of Service</Link></li>
                             <li><Link href="/accessibility" className="hover:text-gold-400 cursor-pointer transition-colors">Accessibility</Link></li>
-                            <li>
+                            {/* <li>
                                 <Link href="/admin" className="hover:text-gold-400 cursor-pointer transition-colors text-stone-600">
                                     Admin Access
                                 </Link>
-                            </li>
+                            </li> */}
                         </ul>
                     </div>
                 </div>

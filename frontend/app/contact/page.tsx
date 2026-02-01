@@ -16,22 +16,18 @@ export default function ContactPage() {
                     <div className="space-y-4">
                         <div>
                             <h3 className="font-bold text-lg mb-1">Email</h3>
-                            <p className="text-stone-600">concierge@kanhaandkishori.com</p>
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-lg mb-1">Phone</h3>
-                            <p className="text-stone-600">+1 (800) 123-4567</p>
+                            <p className="text-stone-600">kanhaandkishorijewels@gmail.com</p>
                         </div>
                         <div>
                             <h3 className="font-bold text-lg mb-1">Address</h3>
                             <p className="text-stone-600">
-                                123 Jewelers Row<br />
-                                New York, NY 10036
+                                Dwarka Sector 8<br />
+                                New Delhi, 110075
                             </p>
                         </div>
                         <div>
                             <h3 className="font-bold text-lg mb-1">Hours</h3>
-                            <p className="text-stone-600">Mon-Fri: 10am - 7pm EST</p>
+                            <p className="text-stone-600">Mon-Sat: 10am - 7pm</p>
                         </div>
                     </div>
                 </div>

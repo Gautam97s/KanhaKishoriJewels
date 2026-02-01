@@ -15,7 +15,7 @@ export default function AboutPage() {
                     {/* Placeholder for hero image */}
                     <div className="w-full h-full bg-stone-200 relative">
                         <Image
-                            src="/images/hero-jewelry.jpg"
+                            src="/images/HeroRing.jpeg"
                             alt="Artisan Jewelry"
                             fill
                             className="object-cover"

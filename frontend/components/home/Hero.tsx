@@ -37,13 +37,10 @@ export default function Hero({ products }: HeroProps) {
                 <div className="md:w-1/3 flex justify-center relative">
                     <div className="relative w-64 md:w-96 aspect-[3/4] shadow-2xl">
                         <img
-                            src="https://images.unsplash.com/photo-1596942509536-cb7a329759d5?auto=format&fit=crop&q=80&w=800"
+                            src="/images/HeroRing.jpeg"
                             alt="Hero Ring"
                             className="w-full h-full object-cover"
                         />
-                        <div className="absolute bottom-8 left-8 bg-white/20 backdrop-blur-md p-3 rounded-full cursor-pointer hover:bg-white/40 transition">
-                            <Play className="w-5 h-5 text-white fill-white" />
-                        </div>
                     </div>
                 </div>
 

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Product, Category, User, Order } from './types';
 import { CATEGORIES } from './constants'; // Keep categories static for now if backend doesn't have an endpoint, or mock them if needed.
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
 const api = axios.create({
     baseURL: API_URL,

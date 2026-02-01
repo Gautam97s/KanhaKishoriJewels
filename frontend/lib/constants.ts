@@ -5,31 +5,31 @@ export const CATEGORIES: Category[] = [
         id: 'cat_necklaces',
         name: 'Necklaces',
         slug: 'necklaces',
-        image: 'https://images.unsplash.com/photo-1599643478518-17488fbbcd75?auto=format&fit=crop&q=80&w=800',
+        image: 'images/Necklace.jpeg',
     },
     {
         id: 'cat_pendants',
         name: 'Pendants',
         slug: 'pendants',
-        image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=800',
+        image: 'images/Pendant.jpeg',
     },
     {
         id: 'cat_bracelets',
         name: 'Bracelets',
         slug: 'bracelets',
-        image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=800',
+        image: 'images/Bracelet.jpeg',
     },
     {
         id: 'cat_rings',
         name: 'Rings',
         slug: 'rings',
-        image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&q=80&w=800',
+        image: 'images/Ring.jpeg',
     },
     {
         id: 'cat_earrings',
         name: 'Earrings',
         slug: 'earrings',
-        image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=800',
+        image: 'images/Earing.jpeg',
     }
 ];
 

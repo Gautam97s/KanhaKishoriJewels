@@ -10,8 +10,13 @@ app = FastAPI(
 # Set all CORS enabled origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Frontend URL
-    allow_credentials=False,
+    allow_origins=[
+        "https://www.kanhakishori.in",
+        "https://kanhakishorijewels-production.up.railway.app",
+        "http://localhost:3000",
+        "http://localhost:8000"
+    ],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )

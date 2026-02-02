@@ -114,6 +114,8 @@ def update_product(
     db.refresh(product)
     return product
 
+from sqlalchemy.exc import IntegrityError
+
 @router.delete("/{slug}", response_model=ProductSchema)
 def delete_product(
     *,
@@ -131,6 +133,13 @@ def delete_product(
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
 
-    db.delete(product)
-    db.commit()
+    try:
+        db.delete(product)
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot delete this product because it is part of existing orders. Please mark it as 'Out of Stock' instead."
+        )
     return product

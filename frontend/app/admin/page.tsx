@@ -37,6 +37,7 @@ export default function AdminPage() {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
 
     const [error, setError] = useState<{ [key: string]: string }>({});
+    const [errorString, setErrorString] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -184,9 +185,12 @@ export default function AdminPage() {
             try {
                 await removeProduct(itemToDelete.id);
                 setSuccessMessage(`"${itemToDelete.name}" has been deleted.`);
-            } catch (error) {
-                // Error handled in removeProduct (throws)
-                // We could set an error state here if needed
+                setErrorString(null);
+            } catch (error: any) {
+                console.error("Delete failed", error);
+                const msg = error.response?.data?.detail || "Failed to delete product. It might be linked to existing orders.";
+                setErrorString(msg);
+                setSuccessMessage(null);
             } finally {
                 setItemToDelete(null);
             }
@@ -307,6 +311,24 @@ export default function AdminPage() {
                         {editingId ? 'Edit Product' : 'Add New Product'}
                     </button>
                 </div>
+
+                {/* Global Messages (List View) */}
+                {activeTab === 'list' && (
+                    <div className="mb-6">
+                        {successMessage && (
+                            <div className="bg-green-50 border border-green-200 text-green-700 p-4 rounded text-sm flex items-center gap-2 animate-fade-in">
+                                <Check className="w-4 h-4" />
+                                {successMessage}
+                            </div>
+                        )}
+                        {errorString && (
+                            <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded text-sm flex items-center gap-2 animate-fade-in">
+                                <AlertCircle className="w-4 h-4" />
+                                {errorString}
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {activeTab === 'list' ? (
                     <div className="bg-white rounded-lg shadow-sm overflow-hidden">

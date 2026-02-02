@@ -22,6 +22,7 @@ def add_is_deleted_column():
         result = db.execute(text("SELECT is_deleted FROM products LIMIT 1"))
         print("Column 'is_deleted' already exists.")
     except Exception:
+        db.rollback() # Reset transaction after failed SELECT
         # Column likely doesn't exist
         print("Column 'is_deleted' not found. Adding it...")
         try:

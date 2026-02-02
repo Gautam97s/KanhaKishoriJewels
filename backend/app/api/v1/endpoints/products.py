@@ -25,7 +25,7 @@ def read_products(
     """
     Retrieve products.
     """
-    query = db.query(Product)
+    query = db.query(Product).filter(Product.is_deleted == False)
     if category:
         query = query.filter(Product.category == category)
     products = query.offset(skip).limit(limit).all()
@@ -45,7 +45,7 @@ def read_product_by_slug(
         # Try ID if not slug, for flexibility
         product = db.query(Product).filter(Product.id == slug).first()
     
-    if not product:
+    if not product or product.is_deleted:
         raise HTTPException(status_code=404, detail="Product not found")
     return product
 
@@ -133,13 +133,18 @@ def delete_product(
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
 
-    try:
-        db.delete(product)
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-        raise HTTPException(
-            status_code=400,
-            detail="Cannot delete this product because it is part of existing orders. Please mark it as 'Out of Stock' instead."
-        )
+    # Soft Delete Logic
+    import time
+    
+    # Mark as deleted
+    product.is_deleted = True
+    
+    # Rename slug to free it up for future use (e.g. "necklace-123" -> "necklace-123-deleted-{timestamp}")
+    # This prevents unique constraint errors if user creates a new product with same name
+    product.slug = f"{product.slug}-deleted-{int(time.time())}"
+    
+    db.add(product)
+    db.commit()
+    
+    return product
     return product

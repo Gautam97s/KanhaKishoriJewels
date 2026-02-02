@@ -17,5 +17,6 @@ class Product(Base):
     category = Column(String, index=True, nullable=True)
     is_featured = Column(Boolean, default=False)
     is_holiday_special = Column(Boolean, default=False)
+    is_deleted = Column(Boolean, default=False)
 
     order_items = relationship("OrderItem", back_populates="product")

@@ -23,7 +23,7 @@ app.add_middleware(
 
 @app.get("/")
 def root():
-    return {"message": "Welcome to JewelE Backend API"}
+    return {"message": "Welcome to JewelE Backend API (v2)"}
 
 # We will import and include the API router here later
 from app.api.v1.api import api_router

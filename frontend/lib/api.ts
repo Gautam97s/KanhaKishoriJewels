@@ -127,6 +127,7 @@ export const createProduct = async (productData: Partial<Product>) => {
         category: productData.categoryId, // Map categoryId -> category
         stock: productData.inStock ? 10 : 0, // Simple mapping
         is_featured: productData.isNewArrival,
+        is_holiday_special: productData.isHolidaySpecial, // Added payload field
         details: productData.details // Backend doesn't support details json yet? 
         // We added models but maybe not in schema yet. Checking ProductBase...
         // ProductBase has: name, description, price, image_url, category, stock, is_featured.
@@ -148,6 +149,7 @@ export const updateProductById = async (id: string, productData: Partial<Product
         category: productData.categoryId,
         stock: productData.inStock ? 10 : 0,
         is_featured: productData.isNewArrival,
+        is_holiday_special: productData.isHolidaySpecial // Added payload field
     };
     // Using ID as slug/id param
     const response = await api.put(`/products/${id}`, payload);
@@ -234,5 +236,6 @@ export default {
     getCategories,
     createProduct,
     updateProductById,
-    deleteProduct
+    deleteProduct,
+    login
 };

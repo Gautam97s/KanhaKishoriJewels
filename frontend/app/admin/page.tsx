@@ -8,12 +8,14 @@ import { useShop } from '../../context/ShopContext';
 import { CATEGORIES } from '../../lib/constants';
 import { Product } from '../../lib/types';
 import OrdersManager from '../../components/admin/OrdersManager';
+import api from '../../lib/api';
 
 export default function AdminPage() {
     const router = useRouter();
     const { products, addProduct, updateProduct, removeProduct, toggleProductStock } = useShop();
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [activeTab, setActiveTab] = useState<'add' | 'list' | 'orders'>('list');
     const [searchTerm, setSearchTerm] = useState('');
@@ -37,13 +39,19 @@ export default function AdminPage() {
     const [error, setError] = useState<{ [key: string]: string }>({});
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError({});
-        if (password === 'admin') {
-            setIsAuthenticated(true);
-        } else {
-            setError({ login: 'Invalid password' });
+        try {
+            const { token, user } = await api.login({ email, password });
+            if (token) {
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify(user));
+                setIsAuthenticated(true);
+            }
+        } catch (err: any) {
+            console.error(err);
+            setError({ login: 'Invalid email or password' });
         }
     };
 
@@ -196,14 +204,23 @@ export default function AdminPage() {
                         </div>
                     </div>
                     <h1 className="text-center font-serif text-2xl mb-6 text-stone-900">Admin Access</h1>
+                    <div className="mb-4">
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email Address"
+                            className="w-full bg-beige-50 border p-4 text-sm focus:ring-1 focus:ring-stone-900 outline-none"
+                            autoFocus
+                        />
+                    </div>
                     <div className="mb-6">
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter Password (admin)"
+                            placeholder="Password"
                             className={`w-full bg-beige-50 border p-4 text-sm focus:ring-1 focus:ring-stone-900 outline-none ${error.login ? 'border-red-500' : 'border-transparent'}`}
-                            autoFocus
                         />
                         {error.login && <p className="text-red-500 text-xs mt-1">{error.login}</p>}
                     </div>

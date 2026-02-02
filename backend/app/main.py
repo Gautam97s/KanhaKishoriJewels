@@ -27,8 +27,8 @@ else:
     cors_origins = [
         "https://www.kanhakishori.in",
         "https://kanhakishori.in",
-        "https://www.kanhakishori.in/"
-        "https://kanhakishori.in/"  # Also allow without www
+        "https://www.kanhakishori.in/",
+        "https://kanhakishori.in/", # Also allow without www
         "https://kanhakishorijewels-production.up.railway.app",
         "http://localhost:3000",
         "http://localhost:8000"

@@ -25,7 +25,7 @@ def read_products(
     """
     Retrieve products.
     """
-    query = db.query(Product).filter(Product.is_deleted == False).filter(Product.is_deleted == False)
+    query = db.query(Product).filter(Product.is_deleted == False)
     if category:
         query = query.filter(Product.category == category)
     products = query.offset(skip).limit(limit).all()
